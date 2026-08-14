@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IEDC SIAS — Innovation & Entrepreneurship Development Centre | 2026–27</title>
+
+    <!-- Primary meta -->
+    <meta
+      name="description"
+      content="IEDC SIAS is the student-run Innovation & Entrepreneurship Development Centre at Safi Institute of Advanced Study, Kerala — turning student ideas into prototypes and ventures, backed by Kerala Startup Mission. Explore the 2026–27 team, events and programmes."
+    />
+    <link rel="canonical" href="https://iedcsias.github.io/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://iedcsias.github.io/" />
+    <meta property="og:site_name" content="IEDC SIAS" />
+    <meta property="og:title" content="IEDC SIAS | 2026–27 — Ideas are easy. Acting on them is everything." />
+    <meta
+      property="og:description"
+      content="The student-run innovation and entrepreneurship centre at SIAS, Vazhayoor. Events, programmes and the 2026–27 core team."
+    />
+    <meta property="og:image" content="https://iedcsias.github.io/assets/images/logo.png" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="IEDC SIAS | 2026–27" />
+    <meta
+      name="twitter:description"
+      content="Ideas are easy. Acting on them is everything. The student-run innovation centre at SIAS, Kerala."
+    />
+    <meta name="twitter:image" content="https://iedcsias.github.io/assets/images/logo.png" />
+
+    <link rel="icon" href="assets/images/favicon.png" type="image/png" />
+
+    <!-- Fonts: Bricolage Grotesque (display) + Instrument Sans (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="assets/css/site.css" />
+
+    <!-- Year registry (loaded early so shared ?year= links to archived
+         page-years can redirect before anything paints) -->
+    <script src="data/site-config.js"></script>
+    <script>
+      (function () {
+        var y = new URLSearchParams(window.location.search).get("year");
+        if (!y || !window.SITE_CONFIG) return;
+        var match = window.SITE_CONFIG.years.filter(function (x) {
+          return x.id === y && x.type === "page" && x.href;
+        })[0];
+        if (match) window.location.replace(match.href);
+      })();
+    </script>
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "IEDC SIAS",
+        "alternateName": "Innovation and Entrepreneurship Development Centre, Safi Institute of Advanced Study",
+        "url": "https://iedcsias.github.io/",
+        "logo": "https://iedcsias.github.io/assets/images/logo.png",
+        "email": "iedc@siasindia.org",
+        "telephone": "+91 99953 86355",
+        "sameAs": ["https://instagram.com/iedc.sias"],
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Safi Institute of Advanced Study, Rasia Nagar, Vazhayoor East",
+          "addressRegion": "Kerala",
+          "postalCode": "673633",
+          "addressCountry": "IN"
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <!-- Announcement bar — rendered by site.js from data/announcements.js.
+         If no active upcoming event exists, nothing renders here. -->
+    <div id="announcementMount"></div>
+
+    <header class="site-header" id="siteHeader">
+      <nav class="nav container" aria-label="Primary">
+        <a class="brand" href="index.html">
+          <!-- Official bulb mark (the full logo's black wordmark would be
+               invisible on the dark canvas, so it is typeset beside it) -->
+          <img
+            src="assets/images/favicon.png"
+            alt=""
+            width="42"
+            height="42"
+          />
+          <span class="brand-word">IEDC <em>SIAS</em></span>
+          <span class="visually-hidden">IEDC SIAS — home</span>
+        </a>
+
+        <button
+          class="nav-toggle"
+          id="navToggle"
+          aria-expanded="false"
+          aria-controls="navMenu"
+        >
+          <span class="nav-toggle-box" aria-hidden="true">
+            <span class="nav-toggle-line"></span>
+            <span class="nav-toggle-line"></span>
+          </span>
+          Menu
+        </button>
+
+        <div class="nav-menu" id="navMenu">
+          <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#events">Events</a></li>
+            <li><a href="#programmes">Programmes</a></li>
+            <li><a href="#team">Team</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+
+          <!-- Year switcher — built by site.js from data/site-config.js -->
+          <div class="year-switcher" id="yearSwitcher">
+            <noscript>
+              <a class="year-fallback" href="2025-26.html">View 2025–26 site</a>
+            </noscript>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main">
+      <!-- ================= HERO ================= -->
+      <section class="hero" id="home">
+        <div class="hero-glow" aria-hidden="true"></div>
+        <div class="container">
+          <p class="kicker" data-reveal>
+            IEDC SIAS · Safi Institute of Advanced Study ·
+            <span data-year-text>2026–27</span>
+          </p>
+          <h1 class="hero-title">
+            Ideas are easy.<br />
+            <span class="lit">Acting on them</span> is everything.
+          </h1>
+          <p class="hero-lede" data-reveal>
+            IEDC SIAS is the student-run launchpad of Safi Institute of
+            Advanced Study — where ideas become prototypes, prototypes become
+            ventures, and Kerala Startup Mission has your back.
+          </p>
+          <div class="hero-cta" data-reveal>
+            <a class="btn btn-volt" href="#events">See upcoming events</a>
+            <a class="link-arrow" href="#team">Meet the team</a>
+          </div>
+          <ul class="hero-proof" id="heroProof" data-reveal></ul>
+        </div>
+      </section>
+
+      <!-- ================= ABOUT ================= -->
+      <section class="section" id="about">
+        <div class="container">
+          <div class="section-head">
+            <span class="section-node" aria-hidden="true"></span>
+            <span class="section-num" aria-hidden="true">01</span>
+            <h2>A place where ideas become ventures</h2>
+          </div>
+
+          <div class="about-grid">
+            <div class="about-copy" data-reveal>
+              <p class="lead-para">
+                IEDC SIAS is the Innovation &amp; Entrepreneurship Development
+                Centre at Safi Institute of Advanced Study — a launchpad run by
+                students, for students, backed by Kerala Startup Mission.
+              </p>
+              <p>
+                We give creative students the room, tools and mentorship to
+                turn innovative ideas into prototypes of viable products and
+                services — and we promote technology-based ventures straight
+                out of the classroom, with access to everything a first-time
+                founder needs.
+              </p>
+
+              <ul class="about-list">
+                <li data-reveal>
+                  <strong>Workshops &amp; bootcamps</strong>
+                  <span>Hands-on skills, from ideation to working prototype.</span>
+                </li>
+                <li data-reveal>
+                  <strong>EN-Talks &amp; webinars</strong>
+                  <span>Founders and operators sharing how it actually went.</span>
+                </li>
+                <li data-reveal>
+                  <strong>Competitions</strong>
+                  <span>Pressure-test your idea against real deadlines.</span>
+                </li>
+                <li data-reveal>
+                  <strong>Startup routes</strong>
+                  <span>Incubation and funding pathways through KSUM.</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="about-art" data-reveal aria-hidden="true">
+              <!-- Circuit motif — echoes the circuit-brain in the logo.
+                   Draws itself in when scrolled into view. -->
+              <svg
+                class="circuit"
+                viewBox="0 0 380 440"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  <linearGradient id="cg" x1="0" y1="0" x2="380" y2="440" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#F4E63F" />
+                    <stop offset="0.45" stop-color="#8DD449" />
+                    <stop offset="1" stop-color="#2FA84F" />
+                  </linearGradient>
+                </defs>
+                <g class="circuit-paths" stroke="url(#cg)" stroke-width="2.5" stroke-linecap="round">
+                  <path d="M190 418 V 250" />
+                  <path d="M190 250 V 130 Q190 118 202 118 H 296" />
+                  <path d="M190 250 Q190 238 178 238 H 96 Q84 238 84 226 V 96" />
+                  <path d="M190 322 Q190 310 202 310 H 276 Q288 310 288 298 V 214" />
+                  <path d="M190 178 Q190 166 178 166 H 128" />
+                  <path d="M84 96 Q84 84 96 84 H 148" />
+                </g>
+                <g class="circuit-nodes" fill="#07130E" stroke="url(#cg)" stroke-width="2.5">
+                  <circle cx="296" cy="118" r="7" />
+                  <circle cx="84" cy="96" r="7" />
+                  <circle cx="288" cy="214" r="7" />
+                  <circle cx="128" cy="166" r="7" />
+                  <circle cx="148" cy="84" r="7" />
+                </g>
+                <g class="circuit-bulb">
+                  <circle cx="190" cy="418" r="14" fill="url(#cg)" />
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= EVENTS ================= -->
+      <section class="section" id="events">
+        <div class="container">
+          <div class="section-head">
+            <span class="section-node" aria-hidden="true"></span>
+            <span class="section-num" aria-hidden="true">02</span>
+            <h2>Upcoming events</h2>
+          </div>
+
+          <!-- Cards render from data/announcements.js -->
+          <div class="events-grid" id="eventsGrid">
+            <noscript>
+              <p class="empty-note">
+                Enable JavaScript to see upcoming events, or follow
+                <a href="https://instagram.com/iedc.sias">@iedc.sias</a>.
+              </p>
+            </noscript>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PROGRAMMES ================= -->
+      <section class="section" id="programmes">
+        <div class="container">
+          <div class="section-head">
+            <span class="section-node" aria-hidden="true"></span>
+            <span class="section-num" aria-hidden="true">03</span>
+            <h2>Programmes conducted</h2>
+          </div>
+
+          <!-- Cards render from data/content-2026-27.js -->
+          <div class="programmes-grid" id="programmesGrid"></div>
+        </div>
+      </section>
+
+      <!-- ================= TEAM ================= -->
+      <section class="section" id="team">
+        <div class="container">
+          <div class="section-head">
+            <span class="section-node" aria-hidden="true"></span>
+            <span class="section-num" aria-hidden="true">04</span>
+            <h2>Team <span data-year-text>2026–27</span></h2>
+          </div>
+          <p class="section-sub" data-reveal>
+            The people who make things happen at SIAS — leads first, and the
+            crew that carries every event over the line.
+          </p>
+
+          <!-- Groups render from data/team-2026-27.js -->
+          <div id="teamGroups">
+            <noscript>
+              <p class="empty-note">Enable JavaScript to meet the team.</p>
+            </noscript>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= GALLERY ================= -->
+      <section class="section" id="gallery">
+        <div class="container">
+          <div class="section-head">
+            <span class="section-node" aria-hidden="true"></span>
+            <span class="section-num" aria-hidden="true">05</span>
+            <h2>Gallery</h2>
+          </div>
+
+          <!-- Images render from data/content-2026-27.js -->
+          <div class="gallery-grid" id="galleryGrid"></div>
+        </div>
+      </section>
+
+      <!-- ================= FAQ ================= -->
+      <section class="section" id="faq">
+        <div class="container">
+          <div class="section-head">
+            <span class="section-node" aria-hidden="true"></span>
+            <span class="section-num" aria-hidden="true">06</span>
+            <h2>Any questions? Answered.</h2>
+          </div>
+
+          <div class="faq-list">
+            <div class="faq-item" data-reveal>
+              <h3>
+                <button
+                  class="faq-btn"
+                  aria-expanded="false"
+                  aria-controls="faqPanel1"
+                  id="faqBtn1"
+                >
+                  What is IEDC?
+                  <span class="faq-icon" aria-hidden="true"></span>
+                </button>
+              </h3>
+              <div
+                class="faq-panel"
+                id="faqPanel1"
+                role="region"
+                aria-labelledby="faqBtn1"
+              >
+                <div class="faq-body">
+                  <p>
+                    The Innovation and Entrepreneurship Development Centre
+                    (IEDC) is an initiative that transforms young people into
+                    technological entrepreneurs and innovative leaders. IEDC
+                    SIAS believes in a culture beyond textbooks: we back
+                    innovative ideas early and support students until those
+                    ideas become solid projects — a platform to pursue ideas
+                    and businesses from the very first stage.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="faq-item" data-reveal>
+              <h3>
+                <button
+                  class="faq-btn"
+                  aria-expanded="false"
+                  aria-controls="faqPanel2"
+                  id="faqBtn2"
+                >
+                  What is KSUM?
+                  <span class="faq-icon" aria-hidden="true"></span>
+                </button>
+              </h3>
+              <div
+                class="faq-panel"
+                id="faqPanel2"
+                role="region"
+                aria-labelledby="faqBtn2"
+              >
+                <div class="faq-body">
+                  <p>
+                    The Kerala Startup Mission (KSUM) is the Government of
+                    Kerala's nodal agency for promoting entrepreneurship, and
+                    the implementing body of the Kerala Technology Startup
+                    Policy. Founded in 2006, it builds the infrastructure and
+                    ecosystem that technology startups need to grow.
+                  </p>
+                  <p>
+                    Today that ecosystem counts 2,900+ registered startups,
+                    10&nbsp;lakh+ sq.&nbsp;ft. of incubation space, 40+
+                    incubators and 300+ innovation centres across Kerala —
+                    including this one. For student founders, KSUM means real
+                    support across the whole startup life cycle: incubation,
+                    mentorship, government schemes, funding and expansion
+                    opportunities.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="faq-item" data-reveal>
+              <h3>
+                <button
+                  class="faq-btn"
+                  aria-expanded="false"
+                  aria-controls="faqPanel3"
+                  id="faqBtn3"
+                >
+                  What is a startup?
+                  <span class="faq-icon" aria-hidden="true"></span>
+                </button>
+              </h3>
+              <div
+                class="faq-panel"
+                id="faqPanel3"
+                role="region"
+                aria-labelledby="faqBtn3"
+              >
+                <div class="faq-body">
+                  <p>
+                    A startup is a company in the first stages of operation,
+                    founded by one or more entrepreneurs to build a product or
+                    service they believe people want.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="faq-item" data-reveal>
+              <h3>
+                <button
+                  class="faq-btn"
+                  aria-expanded="false"
+                  aria-controls="faqPanel4"
+                  id="faqBtn4"
+                >
+                  How does IEDC SIAS help me?
+                  <span class="faq-icon" aria-hidden="true"></span>
+                </button>
+              </h3>
+              <div
+                class="faq-panel"
+                id="faqPanel4"
+                role="region"
+                aria-labelledby="faqBtn4"
+              >
+                <div class="faq-body">
+                  <p>
+                    We give you what a first-time founder actually needs:
+                    venues and tools to prototype, workshops and webinars to
+                    build skills, EN-Talks to learn from real founders,
+                    competitions to test your idea — and access to KSUM's
+                    startup ecosystem when you're ready to take it further.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= CONTACT ================= -->
+      <section class="section" id="contact">
+        <div class="container">
+          <div class="section-head">
+            <span class="section-node" aria-hidden="true"></span>
+            <span class="section-num" aria-hidden="true">07</span>
+            <h2>Let's talk</h2>
+          </div>
+
+          <div class="contact-grid">
+            <div class="contact-info">
+              <p class="section-sub" data-reveal>
+                Got an idea, a question, or a collaboration in mind? We love
+                hearing from students, mentors and partners.
+              </p>
+
+              <div class="info-block" data-reveal>
+                <h3>Find us</h3>
+                <p>
+                  Safi Institute of Advanced Study (SIAS)<br />
+                  Rasia Nagar, Vazhayoor East<br />
+                  Kerala 673633
+                </p>
+              </div>
+              <div class="info-block" data-reveal>
+                <h3>Write or call</h3>
+                <p>
+                  <a href="mailto:iedc@siasindia.org">iedc@siasindia.org</a><br />
+                  <a href="tel:+919995386355">+91 99953 86355</a>
+                </p>
+              </div>
+              <div class="info-block" data-reveal>
+                <h3>Follow the work</h3>
+                <p>
+                  <a
+                    href="https://instagram.com/iedc.sias"
+                    target="_blank"
+                    rel="noopener"
+                    >Instagram — @iedc.sias</a
+                  >
+                </p>
+              </div>
+            </div>
+
+            <form class="contact-form" id="contactForm" novalidate data-reveal>
+              <h3>Send us a message</h3>
+
+              <div class="field">
+                <label for="cfName">Full name</label>
+                <input
+                  type="text"
+                  id="cfName"
+                  name="name"
+                  autocomplete="name"
+                  required
+                />
+                <p class="field-error" id="cfNameErr" hidden></p>
+              </div>
+
+              <div class="field">
+                <label for="cfEmail">Email</label>
+                <input
+                  type="email"
+                  id="cfEmail"
+                  name="email"
+                  autocomplete="email"
+                  required
+                />
+                <p class="field-error" id="cfEmailErr" hidden></p>
+              </div>
+
+              <div class="field">
+                <label for="cfPhone">Phone <span class="optional">(optional)</span></label>
+                <input
+                  type="tel"
+                  id="cfPhone"
+                  name="phone"
+                  autocomplete="tel"
+                />
+                <p class="field-error" id="cfPhoneErr" hidden></p>
+              </div>
+
+              <div class="field">
+                <label for="cfMessage">Message</label>
+                <textarea
+                  id="cfMessage"
+                  name="message"
+                  rows="4"
+                  required
+                ></textarea>
+                <p class="field-error" id="cfMessageErr" hidden></p>
+              </div>
+
+              <button type="submit" class="btn btn-volt">Send message</button>
+              <p class="form-note" id="formNote">
+                Sending opens your email app, addressed to iedc@siasindia.org.
+              </p>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <img
+              src="assets/images/favicon.png"
+              alt=""
+              width="56"
+              height="56"
+              loading="lazy"
+            />
+            <p class="footer-line">Student-run. Future-obsessed.</p>
+            <p class="footer-muted">
+              Innovation &amp; Entrepreneurship Development Centre,<br />
+              Safi Institute of Advanced Study, Vazhayoor.
+            </p>
+          </div>
+          <nav class="footer-col" aria-label="Site sections">
+            <h3>Explore</h3>
+            <a href="#about">About</a>
+            <a href="#events">Events</a>
+            <a href="#programmes">Programmes</a>
+            <a href="#team">Team</a>
+            <a href="#gallery">Gallery</a>
+          </nav>
+          <nav class="footer-col" aria-label="Academic years">
+            <h3>Years</h3>
+            <a href="index.html" aria-current="page">2026–27</a>
+            <a href="2025-26.html">2025–26</a>
+          </nav>
+          <div class="footer-col">
+            <h3>Contact</h3>
+            <a href="mailto:iedc@siasindia.org">iedc@siasindia.org</a>
+            <a href="tel:+919995386355">+91 99953 86355</a>
+            <a href="https://instagram.com/iedc.sias" target="_blank" rel="noopener"
+              >@iedc.sias</a
+            >
+          </div>
+        </div>
+        <div class="footer-base">
+          <p>
+            © <span id="footerYear">2026</span> IEDC SIAS · Backed by Kerala
+            Startup Mission
+          </p>
+          <p class="footer-muted">Built and maintained by the IEDC SIAS web team</p>
+        </div>
+      </div>
+    </footer>
+
+    <button class="back-top" id="backTop" aria-label="Back to top" hidden>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M7 12V2M2.5 6.5 7 2l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <!-- ============ DATA FILES ============
+         ADD NEW YEAR DATA FILES HERE (one pair per year), e.g.:
+         <script src="data/team-2027-28.js"></script>
+         <script src="data/content-2027-28.js"></script>
+    -->
+    <script src="data/announcements.js"></script>
+    <script src="data/team-2026-27.js"></script>
+    <script src="data/content-2026-27.js"></script>
+
+    <script src="assets/js/site.js"></script>
+  </body>
+</html>
