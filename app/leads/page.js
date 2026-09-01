@@ -16,6 +16,35 @@ import {
   sortMembersByIdNumber
 } from '@/lib/db';
 
+// Helper for instant, non-blocking member lookup across memory, localStorage and fallback
+export function findMemberById(id, currentMembers = []) {
+  if (!id) return null;
+  const cleanId = id.toLowerCase().trim();
+
+  // 1. Search current in-memory members
+  if (currentMembers && currentMembers.length > 0) {
+    const found = currentMembers.find(m => m.id && m.id.toLowerCase() === cleanId);
+    if (found) return found;
+  }
+
+  // 2. Search local storage cache immediately
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('iedc_directory_data_v2');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          const found = parsed.find(m => m.id && m.id.toLowerCase() === cleanId);
+          if (found) return found;
+        }
+      }
+    } catch (e) {}
+  }
+
+  // 3. Search default fallback list
+  return defaultMembersData.find(m => m.id && m.id.toLowerCase() === cleanId) || null;
+}
+
 export default function MeetLeadsPage() {
   const [members, setMembers] = useState(defaultMembersData);
   const [loading, setLoading] = useState(false);
@@ -23,30 +52,31 @@ export default function MeetLeadsPage() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedMember, setSelectedMember] = useState(null);
 
-  // Load data from Supabase or localStorage fallback
+  // 1. Instant Cache Hydration & Immediate Hash Pop-Up
   useEffect(() => {
-    function loadFallback() {
-      const stored = localStorage.getItem('iedc_directory_data_v2');
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          if (parsed && parsed.length > 0) {
-            setMembers(parsed);
-          } else {
-            setMembers(defaultMembersData);
-          }
-        } catch (err) {
-          setMembers(defaultMembersData);
+    let initialMembers = defaultMembersData;
+    const stored = localStorage.getItem('iedc_directory_data_v2');
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.length > 0) {
+          initialMembers = parsed;
+          setMembers(parsed);
         }
-      } else {
-        setMembers(defaultMembersData);
-        localStorage.setItem('iedc_directory_data_v2', JSON.stringify(defaultMembersData));
+      } catch (err) {}
+    }
+
+    // Instant resolution on mount (<1ms)
+    const hash = window.location.hash.replace(/^#/, '').trim();
+    if (hash && hash !== '/admin') {
+      const immediateMatch = findMemberById(hash, initialMembers);
+      if (immediateMatch) {
+        setSelectedMember(immediateMatch);
       }
     }
 
-    async function loadData() {
-      loadFallback();
-
+    // Background asynchronous Supabase sync (does NOT block modal pop-up)
+    async function syncSupabase() {
       try {
         const { data, error } = await supabaseClient.from('members').select('*');
         if (error) throw error;
@@ -59,39 +89,66 @@ export default function MeetLeadsPage() {
           });
           setMembers(mapped);
           localStorage.setItem('iedc_directory_data_v2', JSON.stringify(mapped));
+
+          // If hash is still active, ensure modal has the latest updated data
+          const currentHash = window.location.hash.replace(/^#/, '').trim();
+          if (currentHash && currentHash !== '/admin') {
+            const freshMatch = mapped.find(m => m.id && m.id.toLowerCase() === currentHash.toLowerCase());
+            if (freshMatch) {
+              setSelectedMember(freshMatch);
+            }
+          }
         }
       } catch (e) {
-        console.warn("Supabase is unreachable. Operating on local storage database.");
+        console.warn("Supabase background sync unavailable. Operating on local storage database.");
       }
     }
 
-    loadData();
+    syncSupabase();
   }, []);
 
-  // Listen to hash change routing for individual cards (e.g., /leads#IEDC-EXE-0001)
+  // 2. High-speed hashchange listener
   useEffect(() => {
     function handleHashRoute() {
-      const hash = window.location.hash.substring(1);
-      if (hash && hash !== '/admin') {
-        const member = members.find(m => m.id.toLowerCase() === hash.toLowerCase());
-        if (member) {
-          setSelectedMember(member);
-        }
+      const hash = window.location.hash.replace(/^#/, '').trim();
+      if (!hash || hash === '/admin') {
+        setSelectedMember(null);
+        return;
+      }
+
+      const match = findMemberById(hash, members);
+      if (match) {
+        setSelectedMember(match);
+      } else {
+        // Fast targeted fetch from Supabase if not present in local cache
+        supabaseClient
+          .from('members')
+          .select('*')
+          .ilike('id', hash)
+          .single()
+          .then(({ data }) => {
+            if (data) {
+              const member = { ...data, sidebarRole: data.sidebar_role };
+              delete member.sidebar_role;
+              setSelectedMember(member);
+              setMembers(prev => {
+                const exists = prev.some(m => m.id.toLowerCase() === member.id.toLowerCase());
+                return exists ? prev : [member, ...prev];
+              });
+            }
+          })
+          .catch(() => {});
       }
     }
 
-    if (members.length > 0) {
-      handleHashRoute();
-      window.addEventListener('hashchange', handleHashRoute);
-    }
-
+    window.addEventListener('hashchange', handleHashRoute);
     return () => window.removeEventListener('hashchange', handleHashRoute);
   }, [members]);
 
   const closeModal = () => {
     setSelectedMember(null);
-    if (typeof window !== 'undefined') {
-      window.location.hash = '';
+    if (typeof window !== 'undefined' && window.location.hash) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
     }
   };
 
@@ -425,8 +482,9 @@ function DetailModal({ member, onClose }) {
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     if (typeof window !== 'undefined') {
-      const baseUrl = window.location.href.split('#')[0];
-      window.location.hash = member.id;
+      if (window.location.hash.replace(/^#/, '').toLowerCase() !== member.id.toLowerCase()) {
+        window.history.replaceState(null, '', `#${member.id}`);
+      }
     }
     return () => {
       document.body.style.overflow = '';
