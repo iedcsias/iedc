@@ -26,13 +26,11 @@ export default function Navbar() {
   const leftLinks = [
     { href: "#home", label: "Home" },
     { href: "#about", label: "About Us" },
-    { href: "#academics", label: "Academics" },
   ];
 
   const rightLinks = [
-    { href: "#support", label: "Support" },
+    { href: "#events", label: "Events" },
     { href: "/leads", label: "Meet Leads" },
-    { href: "#contact", label: "Contact" },
   ];
 
   const renderLink = (link, isMobile = false) => {

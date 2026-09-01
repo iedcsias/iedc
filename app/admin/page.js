@@ -409,17 +409,57 @@ export default function AdminPage() {
   const handleDownloadQr = () => {
     if (!activeQrMember) return;
     const container = document.getElementById('admin-qr-canvas-container');
-    const canvas = container ? container.querySelector('canvas') : null;
-    if (canvas) {
-      const url = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `qr_${activeQrMember.name.toLowerCase().replace(/\s+/g, '_')}_${activeQrMember.id}.png`;
-      link.click();
-      showToast(`QR Code downloaded for ${activeQrMember.name}.`);
-    } else {
-      showToast("Error generating download link.", true);
+    const sourceCanvas = container ? container.querySelector('canvas') : null;
+    if (sourceCanvas) {
+      // Create high-res download canvas with rounded white background
+      const downloadCanvas = document.createElement('canvas');
+      const targetSize = 600;
+      const margin = 50; // Generous quiet zone keeping finder markers safe from rounded edges
+      const cornerRadius = 48; // Sleek modern rounded corner radius
+
+      downloadCanvas.width = targetSize;
+      downloadCanvas.height = targetSize;
+      const ctx = downloadCanvas.getContext('2d');
+      if (ctx) {
+        // 1. Transparent base canvas
+        ctx.clearRect(0, 0, targetSize, targetSize);
+
+        // 2. Draw smooth rounded white background
+        ctx.fillStyle = '#ffffff';
+        if (typeof ctx.roundRect === 'function') {
+          ctx.beginPath();
+          ctx.roundRect(0, 0, targetSize, targetSize, cornerRadius);
+          ctx.fill();
+        } else {
+          const r = cornerRadius;
+          ctx.beginPath();
+          ctx.moveTo(r, 0);
+          ctx.lineTo(targetSize - r, 0);
+          ctx.quadraticCurveTo(targetSize, 0, targetSize, r);
+          ctx.lineTo(targetSize, targetSize - r);
+          ctx.quadraticCurveTo(targetSize, targetSize, targetSize - r, targetSize);
+          ctx.lineTo(r, targetSize);
+          ctx.quadraticCurveTo(0, targetSize, 0, targetSize - r);
+          ctx.lineTo(0, r);
+          ctx.quadraticCurveTo(0, 0, r, 0);
+          ctx.closePath();
+          ctx.fill();
+        }
+        
+        // 3. Render QR code centered with crisp pixelated sharpness
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(sourceCanvas, margin, margin, targetSize - (margin * 2), targetSize - (margin * 2));
+        
+        const url = downloadCanvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `qr_${activeQrMember.name.toLowerCase().replace(/\s+/g, '_')}_${activeQrMember.id}.png`;
+        link.click();
+        showToast(`Rounded QR Code downloaded for ${activeQrMember.name}.`);
+        return;
+      }
     }
+    showToast("Error generating download link.", true);
   };
 
   // Live Card Preview member model builder
@@ -936,30 +976,77 @@ export default function AdminPage() {
       {/* QR CODE DOWNLOAD MODAL */}
       {activeQrMember && (
         <div className="modal-overlay open" onClick={() => setActiveQrMember(null)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '350px', textAlign: 'center' }}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '380px', textAlign: 'center' }}>
             <button className="modal-close-btn" onClick={() => setActiveQrMember(null)}>
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             <h2 className="modal-name" style={{ fontSize: '1.4rem', marginBottom: '0.25rem', color: '#ffffff' }}>{activeQrMember.name}</h2>
-            <div style={{ color: '#9ca3af', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
+            <div style={{ color: '#9ca3af', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
               Scan QR to view profile details
             </div>
             
             <div style={{ 
               background: '#ffffff', 
-              padding: '1.25rem', 
-              borderRadius: '12px', 
+              padding: '1rem', 
+              borderRadius: '16px', 
               display: 'inline-block', 
               boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-              marginBottom: '1.5rem' 
+              marginBottom: '1rem' 
             }} id="admin-qr-canvas-container">
               <QRCodeCanvas 
                 value={typeof window !== 'undefined' ? `${window.location.origin}/leads#${activeQrMember.id}` : ''}
-                size={180}
+                size={200}
                 bgColor="#ffffff"
                 fgColor="#000000"
-                level="Q"
+                level="H"
+                includeMargin={true}
               />
+            </div>
+
+            {/* Target URL Preview & Copy */}
+            <div style={{ 
+              background: 'rgba(255, 255, 255, 0.05)', 
+              border: '1px solid rgba(255, 255, 255, 0.1)', 
+              borderRadius: '8px', 
+              padding: '0.5rem 0.75rem', 
+              marginBottom: '1.25rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '0.5rem',
+              textAlign: 'left'
+            }}>
+              <div style={{ 
+                fontSize: '0.75rem', 
+                color: '#a3e635', 
+                fontFamily: 'monospace', 
+                overflow: 'hidden', 
+                textOverflow: 'ellipsis', 
+                whiteSpace: 'nowrap' 
+              }}>
+                {typeof window !== 'undefined' ? `${window.location.origin}/leads#${activeQrMember.id}` : ''}
+              </div>
+              <button 
+                type="button"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#9ca3af',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+                title="Copy link"
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    navigator.clipboard.writeText(`${window.location.origin}/leads#${activeQrMember.id}`);
+                    showToast('Link copied to clipboard!');
+                  }
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              </button>
             </div>
             
             <button 
@@ -968,7 +1055,7 @@ export default function AdminPage() {
               onClick={handleDownloadQr}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              Download QR Code
+              Download QR Code (High Res)
             </button>
           </div>
         </div>

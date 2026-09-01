@@ -12,15 +12,11 @@ function parseDate(str) {
   return isNaN(d.getTime()) ? null : d;
 }
 
-function daysUntil(d) {
-  const today = new Date();
-  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  return Math.round((d - startOfToday) / 86400000);
-}
-
 function deadlineText(d) {
   if (!d) return null;
-  const n = daysUntil(d);
+  const today = new Date();
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const n = Math.round((d - startOfToday) / 86400000);
   if (n < 0) return null;
   if (n === 0) return "Closes today";
   if (n === 1) return "Closes tomorrow";
@@ -31,6 +27,14 @@ function deadlineText(d) {
 
 export default function EventsSection() {
   const [events, setEvents] = useState([]);
+  const [flippedCards, setFlippedCards] = useState({});
+
+  const toggleFlip = (index) => {
+    setFlippedCards((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
 
   useEffect(() => {
     const today = new Date();
@@ -40,10 +44,9 @@ export default function EventsSection() {
       .filter((a) => a && a.active && a.title)
       .map((a) => ({
         ...a,
-        _date: parseDate(a.date),
+        _date: parseDate(a.date) || new Date(),
         _deadline: parseDate(a.deadline),
       }))
-      .filter((a) => a._date && a._date >= startOfToday)
       .sort((a, b) => a._date - b._date);
 
     setEvents(list);
@@ -83,40 +86,98 @@ export default function EventsSection() {
             events.map((a, i) => {
               const day = a._date.getDate();
               const dayStr = day < 10 ? "0" + day : day;
+              const monthStr = MONTHS[a._date.getMonth()];
+              const yearStr = a._date.getFullYear();
               const dl = deadlineText(a._deadline);
-              const metaBits = [];
-              if (a.time) metaBits.push(a.time);
-              if (a.venue) metaBits.push(a.venue);
+              const isFlipped = !!flippedCards[i];
 
               return (
-                <article key={i} className="event-card in" data-reveal style={{ "--i": i % 6 }}>
-                  <div className="event-datebox">
-                    <span className="event-day">{dayStr}</span>
-                    <span className="event-mon">{MONTHS[a._date.getMonth()]}</span>
-                  </div>
+                <div 
+                  key={i} 
+                  className={`event-flip-card in ${isFlipped ? "flipped" : ""}`}
+                  data-reveal 
+                  style={{ "--i": i % 6 }}
+                  onClick={() => toggleFlip(i)}
+                >
+                  <div className="flip-card-content">
+                    {/* RESTING STATE: Rotating neon glowing border + Date / Title */}
+                    <div className="flip-card-back">
+                      <div className="flip-card-back-content">
+                        <div className="flip-date-badge">
+                          <span className="flip-date-day">{dayStr}</span>
+                          <span className="flip-date-mon">{monthStr}</span>
+                          <span className="flip-date-year">{yearStr}</span>
+                        </div>
+                        
+                        <div className="flip-event-info">
+                          <div className="flip-event-tag">IEDC SIAS EVENT</div>
+                          <h3 className="flip-event-title">{a.title}</h3>
+                        </div>
 
-                  <div className="event-body">
-                    <h3>{a.title}</h3>
-                    {a.description && <p className="event-desc">{a.description}</p>}
-                    {metaBits.length > 0 && <p className="event-meta">{metaBits.join(" · ")}</p>}
+                        <div className="flip-hint-pill">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                          </svg>
+                          <span>Hover / Tap for details</span>
+                        </div>
+                      </div>
+                    </div>
 
-                    <div className="event-foot">
-                      {dl && <span className="event-deadline">{dl}</span>}
-                      {a.registrationUrl ? (
-                        <a
-                          className="btn btn-volt btn-sm"
-                          href={a.registrationUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Register for {a.title}
-                        </a>
-                      ) : (
-                        <span className="chip-soon">Registration opens soon</span>
-                      )}
+                    {/* FLIPPED STATE: Floating glowing spheres + Description + CTA */}
+                    <div className="flip-card-front">
+                      <div className="floating-glow-bg">
+                        <div className="glow-circle" id="circle1"></div>
+                        <div className="glow-circle" id="circleBottom"></div>
+                        <div className="glow-circle" id="circleRight"></div>
+                      </div>
+
+                      <div className="flip-front-content">
+                        <div className="flip-top-row">
+                          <small className="flip-category-badge">
+                            {dl ? dl : "Upcoming Event"}
+                          </small>
+                          {a.time && <span className="flip-venue-tag">{a.time}</span>}
+                        </div>
+
+                        <div className="flip-description-card">
+                          <h4 className="flip-desc-title">{a.title}</h4>
+                          {a.description && (
+                            <p className="flip-desc-text">{a.description}</p>
+                          )}
+
+                          {a.venue && (
+                            <div className="flip-meta-row">
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8dd449" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                              </svg>
+                              <span>{a.venue}</span>
+                            </div>
+                          )}
+
+                          <div className="flip-card-actions" onClick={(e) => e.stopPropagation()}>
+                            {a.registrationUrl ? (
+                              <a
+                                className="btn btn-volt btn-sm flip-reg-btn"
+                                href={a.registrationUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                Register Now
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                                  <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                              </a>
+                            ) : (
+                              <span className="chip-soon flip-chip-soon">Registration opens soon</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </article>
+                </div>
               );
             })
           )}
