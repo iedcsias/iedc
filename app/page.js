@@ -1,5 +1,3 @@
-import AnnouncementBar from "@/components/AnnouncementBar";
-import Navbar from "@/components/Navbar";
 import HashRedirect from "@/components/HashRedirect";
 import HeroSection from "@/components/HeroSection";
 import EventsSection from "@/components/EventsSection";
@@ -16,8 +14,6 @@ export default function Home() {
   return (
     <>
       <HashRedirect />
-      <AnnouncementBar />
-      <Navbar currentYear="2026-27" />
       <main id="main">
         {/* 1) Home page */}
         <HeroSection />

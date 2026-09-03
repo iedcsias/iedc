@@ -3,18 +3,28 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import SITE_CONFIG from "@/data/site-config";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 8);
+      setScrolled(window.scrollY > 15);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Close drawer on ESC key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setDrawerOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   const getHref = (target) => {
@@ -23,111 +33,145 @@ export default function Navbar() {
     return target;
   };
 
-  const leftLinks = [
-    { href: "#home", label: "Home" },
-    { href: "#about", label: "About Us" },
+  const navLinks = [
+    { href: "#home", label: "HOME" },
+    { href: "#about", label: "ABOUT" },
+    { href: "#events", label: "EVENTS" },
+    { href: "#support", label: "PROGRAMMES" },
+    { href: "/leads", label: "MEET LEADS" },
+    { href: "#support", label: "COMMUNITY" },
+    { href: "#contact", label: "CONTACT" },
   ];
 
-  const rightLinks = [
-    { href: "#events", label: "Events" },
-    { href: "/leads", label: "Meet Leads" },
-  ];
-
-  const renderLink = (link, isMobile = false) => {
-    const isRoute = link.href.startsWith("/");
-    const resolvedHref = getHref(link.href);
-
-    if (isRoute) {
-      return (
-        <Link 
-          key={link.href} 
-          href={resolvedHref} 
-          className={isMobile ? "" : "nav-item-link"}
-          onClick={() => isMobile && setMenuOpen(false)}
-        >
-          {link.label}
-        </Link>
-      );
-    }
-
-    return (
-      <a 
-        key={link.href} 
-        href={resolvedHref} 
-        className={isMobile ? "" : "nav-item-link"}
-        onClick={() => isMobile && setMenuOpen(false)}
-      >
-        {link.label}
-      </a>
-    );
+  const handleLinkClick = () => {
+    setDrawerOpen(false);
   };
 
   return (
-    <header className={`site-header ${scrolled ? "scrolled" : ""}`} id="siteHeader">
-      <div className="nav-container">
-        
-        {/* Mobile Logo Brand */}
-        <Link className="brand-mobile" href="/">
-          <img src="/assets/IEDC LOGOS.png" alt="IEDC Logo" width="34" height="34" className="brand-logo-img" style={{ objectFit: "contain" }} />
-          <span className="brand-title">IEDC SIAS</span>
-        </Link>
+    <>
+      <header className={`site-header-tech ${scrolled ? "scrolled" : ""}`} id="siteHeader">
+        <div className="nav-container-tech">
+          
+          {/* Left Side: Brand Logo & Menu Toggle (Matching Image 1 & Image 3) */}
+          <div className="brand-group-left">
+            <Link className="brand-tech" href="/">
+              <div className="brand-logo-glow-wrap">
+                <img 
+                  src="/assets/IEDC LOGOS.png" 
+                  alt="IEDC SIAS Logo" 
+                  width="36" 
+                  height="36" 
+                  className="brand-logo-img" 
+                  style={{ objectFit: "contain" }} 
+                />
+                <span className="brand-live-dot" title="Active Hub" />
+              </div>
+              <span className="brand-name-bold">IEDC SIAS</span>
+            </Link>
 
-        {/* Left Side Links (Desktop) */}
-        <div className="nav-left">
-          {leftLinks.map((link) => renderLink(link))}
+            {/* Menu Button right next to Logo (Matching Reference) */}
+            <button
+              className="btn-menu-trigger"
+              aria-expanded={drawerOpen}
+              onClick={() => setDrawerOpen(!drawerOpen)}
+              aria-label="Toggle navigation drawer"
+            >
+              <span className="menu-icon-dots">••••</span>
+              <span className="menu-trigger-text">MENU</span>
+            </button>
+          </div>
+
+          {/* Center Links (Desktop Horizontal) */}
+          <nav className="nav-desktop-links" aria-label="Main Navigation">
+            {navLinks.slice(0, 5).map((link) => {
+              const isRoute = link.href.startsWith("/");
+              const resolvedHref = getHref(link.href);
+              return isRoute ? (
+                <Link key={link.label} href={resolvedHref} className="nav-item-link">
+                  {link.label}
+                </Link>
+              ) : (
+                <a key={link.label} href={resolvedHref} className="nav-item-link">
+                  {link.label}
+                </a>
+              );
+            })}
+          </nav>
+
+          {/* Right Side: Quick Action Pill Buttons (Matching Reference) */}
+          <div className="nav-right-actions">
+            <a href={getHref("#contact")} className="btn-nav-apply">
+              <span>WORK WITH US</span>
+            </a>
+          </div>
+
+        </div>
+      </header>
+
+      {/* Cyber/Tech Slide-Out Vertical Menu Drawer (Exact Match to Image 3) */}
+      <div 
+        className={`drawer-backdrop ${drawerOpen ? "open" : ""}`}
+        onClick={() => setDrawerOpen(false)}
+        aria-hidden={!drawerOpen}
+      />
+
+      <div 
+        className={`nav-cyber-drawer ${drawerOpen ? "open" : ""}`}
+        role="dialog"
+        aria-label="Site Navigation Drawer"
+      >
+        {/* Drawer Header: Close Button with Geometric Symbol */}
+        <div className="drawer-header">
+          <button
+            className="btn-drawer-close"
+            onClick={() => setDrawerOpen(false)}
+            aria-label="Close navigation"
+          >
+            <span className="close-symbol">⚙</span>
+            <span className="close-text">CLOSE</span>
+          </button>
         </div>
 
-        {/* Center Branding (Desktop) */}
-        <Link className="brand-center" href="/">
-          <img src="/assets/IEDC LOGOS.png" alt="IEDC Logo" width="34" height="34" className="brand-logo-img" style={{ objectFit: "contain" }} />
-          <div className="brand-text-center">
-            <span className="brand-title">IEDC SIAS</span>
-          </div>
-        </Link>
+        <div className="drawer-divider" />
 
-        {/* Right Side Links & CTA (Desktop) */}
-        <div className="nav-right">
-          {rightLinks.map((link) => renderLink(link))}
-          <a href={getHref("#apply")} className="btn-cta-mockup">
-            Apply Now
-            <svg className="cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
+        {/* Drawer Vertical Nav Links */}
+        <nav className="drawer-nav-list" aria-label="Drawer Navigation">
+          {navLinks.map((link) => {
+            const isRoute = link.href.startsWith("/");
+            const resolvedHref = getHref(link.href);
+            return isRoute ? (
+              <Link 
+                key={link.label} 
+                href={resolvedHref} 
+                className="drawer-nav-link"
+                onClick={handleLinkClick}
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <a 
+                key={link.label} 
+                href={resolvedHref} 
+                className="drawer-nav-link"
+                onClick={handleLinkClick}
+              >
+                {link.label}
+              </a>
+            );
+          })}
+        </nav>
+
+        {/* Drawer Footer Contact Info (Matching Screenshot) */}
+        <div className="drawer-footer">
+          <span className="drawer-footer-label">CONNECT WITH US:</span>
+          <a 
+            href={`mailto:${SITE_CONFIG.contact?.email || "iedc@siasindia.org"}`} 
+            className="drawer-footer-email"
+          >
+            {SITE_CONFIG.contact?.email || "iedc@siasindia.org"}
           </a>
         </div>
-
-        {/* Mobile Toggle Button */}
-        <button
-          className="nav-toggle"
-          id="navToggle"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle navigation menu"
-        >
-          <span className="nav-toggle-box" aria-hidden="true">
-            <span className="nav-toggle-line"></span>
-            <span className="nav-toggle-line"></span>
-          </span>
-        </button>
-
-        {/* Mobile Dropdown Menu */}
-        <div className={`nav-menu-mobile ${menuOpen ? "open" : ""}`} id="navMenuMobile">
-          <ul className="mobile-nav-links">
-            {[...leftLinks, ...rightLinks].map((link) => (
-              <li key={link.href}>
-                {renderLink(link, true)}
-              </li>
-            ))}
-            <li>
-              <a href={getHref("#apply")} className="btn-mobile-apply" onClick={() => setMenuOpen(false)}>
-                Apply Now
-              </a>
-            </li>
-          </ul>
-        </div>
-
       </div>
-    </header>
+    </>
   );
 }

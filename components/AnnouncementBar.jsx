@@ -27,10 +27,10 @@ function deadlineText(d) {
   if (!d) return null;
   const n = daysUntil(d);
   if (n < 0) return null;
-  if (n === 0) return "Closes today";
-  if (n === 1) return "Closes tomorrow";
-  if (n <= 7) return "Closes in " + n + " days";
-  return "Closes " + fmtDate(d);
+  if (n === 0) return "CLOSES TODAY";
+  if (n === 1) return "CLOSES TOMORROW";
+  if (n <= 7) return `CLOSES IN ${n} DAYS`;
+  return `CLOSES ${fmtDate(d).toUpperCase()}`;
 }
 
 export default function AnnouncementBar() {
@@ -66,16 +66,22 @@ export default function AnnouncementBar() {
     if (events.length > 1) {
       const timer = setInterval(() => {
         setIdx((prev) => (prev + 1) % events.length);
-      }, 7000);
+      }, 7500);
       return () => clearInterval(timer);
     }
   }, [events]);
 
-  if (dismissed || !events.length) return null;
+  if (dismissed) return null;
 
-  const current = events[idx];
-  const meta = fmtDate(current._date) + (current.venue ? " · " + current.venue : "");
-  const dl = deadlineText(current._deadline);
+  const current = events.length > 0 ? events[idx] : {
+    title: "Idea Fest 2026 Registration Open · KSUM Pre-Seed Grants Active",
+    _date: new Date(),
+    venue: "SIAS Innovation Hub",
+    registrationUrl: "#contact",
+  };
+
+  const meta = current._date ? fmtDate(current._date) + (current.venue ? " · " + current.venue : "") : "";
+  const dl = current._deadline ? deadlineText(current._deadline) : "ACTIVE COHORT";
 
   const handleClose = () => {
     try {
@@ -85,41 +91,42 @@ export default function AnnouncementBar() {
   };
 
   return (
-    <div className="annc" role="region" aria-label="Announcement">
-      <div className="container annc-inner">
-        <p className="annc-text" aria-live="polite">
-          <span className="annc-flag">Next up</span>
-          <strong className="annc-title">{current.title}</strong>
-          <span className="annc-meta">{meta}</span>
-          {dl && <span className="annc-deadline">{dl}</span>}
-        </p>
-
-        <div className="annc-actions">
-          {events.length > 1 && (
-            <span className="annc-count">
-              {idx + 1} / {events.length}
+    <div className="annc-top-bar" role="region" aria-label="News ticker announcement">
+      <div className="container annc-top-inner">
+        {/* Left: News ticker like Image 1 */}
+        <div className="annc-left-track">
+          <span className="annc-news-tag">NEWS:</span>
+          <div className="annc-news-marquee">
+            <span className="annc-news-text">
+              {current.title} {meta ? `[ ${meta} ]` : ""}
             </span>
-          )}
-          {current.registrationUrl && (
-            <a
-              className="annc-cta"
-              href={current.registrationUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Register for ${current.title}`}
-            >
-              Register now →
+          </div>
+          {dl && <span className="annc-status-chip">{dl}</span>}
+        </div>
+
+        {/* Right: Quick Portal links + Action pill */}
+        <div className="annc-right-track">
+          <div className="annc-meta-links">
+            <a href="https://startupmission.kerala.gov.in" target="_blank" rel="noopener noreferrer" className="annc-sublink">
+              KSUM PORTAL
             </a>
-          )}
+            <span className="annc-link-sep">|</span>
+            <a href="#events" className="annc-sublink">
+              INCUBATION HUB
+            </a>
+          </div>
+
+          <a href="#contact" className="annc-pill-btn">
+            WORK WITH US
+          </a>
+
           <button
             type="button"
-            className="annc-close"
-            aria-label="Dismiss announcement"
+            className="annc-dismiss-btn"
+            aria-label="Dismiss top announcement"
             onClick={handleClose}
           >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-              <path d="M1 1l10 10M11 1L1 11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-            </svg>
+            ✕
           </button>
         </div>
       </div>
